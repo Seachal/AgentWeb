@@ -4,7 +4,7 @@ apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "${SUPPORT_LIB_VERSION}"
+    buildToolsVersion "27.0.3"
 
 
     defaultConfig {
@@ -46,9 +46,10 @@ task javadoc(type: Javadoc) {
 publish {
     userOrg = 'just'
     groupId = 'com.just.agentweb'
-    artifactId = 'filechooser'
-    version = '4.0.2'
-    description = 'very easy to build you web page'
+    artifactId = 'agentweb'
+    publishVersion = '4.0.2'
+    desc = 'very easy to build you web page'
     website = "https://github.com/Justson/AgentWeb"
 
 }
+
