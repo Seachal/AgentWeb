@@ -128,6 +128,9 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 		initView(view);
 
 
+
+
+
 		// AgentWeb 4.0 开始，删除该类以及删除相关的API
 //        DefaultMsgConfig.DownloadMsgConfig mDownloadMsgConfig = mAgentWeb.getDefaultMsgConfig().getDownloadMsgConfig();
 		//  mDownloadMsgConfig.setCancel("放弃");  // 修改下载提示信息，这里可以语言切换
@@ -147,11 +150,10 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
 		/**
 		 * PermissionInterceptor 能达到 url1 允许授权， url2 拒绝授权的效果。
-		 * AgentWeb 是用自己的权限机制的 ，true 该Url对应页面请求定位权限拦截 ，false 默认允许。
 		 * @param url
 		 * @param permissions
 		 * @param action
-		 * @return
+		 * @return true 该Url对应页面请求权限进行拦截 ，false 表示不拦截。
 		 */
 		@Override
 		public boolean intercept(String url, String[] permissions, String action) {
