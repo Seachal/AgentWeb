@@ -182,10 +182,11 @@ public class MainActivity extends AppCompatActivity {
 				startActivity(new Intent(this, CommonActivity.class)
 						.putExtra(CommonActivity.TYPE_KEY, FLAG_GUIDE_DICTIONARY_JSBRIDGE_SAMPLE));
 				break;
+//				继承自BaseAgentWebActivity
 			case FLAG_GUIDE_DICTIONARY_EXTENDS_BASE_ACT:
 				startActivity(new Intent(this, EasyWebActivity.class));
 				break;
-
+//             继承自BaseAgentWebFragment
 			case FLAG_GUIDE_DICTIONARY_EXTENDS_BASE_FRAG:
 				startActivity(new Intent(this, ContainerActivity.class));
 				break;

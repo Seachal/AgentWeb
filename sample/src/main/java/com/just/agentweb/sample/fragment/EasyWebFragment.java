@@ -96,7 +96,11 @@ public class EasyWebFragment extends BaseAgentWebFragment {
 
     };
 
-
+    @Nullable
+    @Override
+    protected String getUrl() {
+        return "http://test.ctitc.cn/deep-api/resources/index_desc.html";
+    }
 
 
 }
