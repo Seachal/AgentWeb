@@ -119,6 +119,10 @@ public class FileChooser {
 	 */
 	private boolean mCameraState = false;
 	/**
+	 * 是否调用摄像头后  调用的是摄像模式  默认是拍照
+	 */
+	private boolean mVideoState = false;
+	/**
 	 * 权限拦截
 	 */
 	private PermissionInterceptor mPermissionInterceptor;
@@ -206,11 +210,18 @@ public class FileChooser {
 			    mIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             }*/
 //			mIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mIntent.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+				mIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+			}
 			return mIntent;
 		}
 
 		Intent i = new Intent();
-		i.setAction(Intent.ACTION_GET_CONTENT);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			i.setAction(Intent.ACTION_OPEN_DOCUMENT);
+		} else {
+			i.setAction(Intent.ACTION_GET_CONTENT);
+		}
 		i.addCategory(Intent.CATEGORY_OPENABLE);
 		if (TextUtils.isEmpty(this.mAcceptType)) {
 			i.setType("*/*");
@@ -234,24 +245,28 @@ public class FileChooser {
 
 
 	private void openFileChooserInternal() {
-
-
+		boolean needVideo = false;
+		// 在此支持视频拍摄
 		// 是否直接打开文件选择器
 		if (this.mIsAboveLollipop && this.mFileChooserParams != null && this.mFileChooserParams.getAcceptTypes() != null) {
 			boolean needCamera = false;
 			String[] types = this.mFileChooserParams.getAcceptTypes();
 			for (String typeTmp : types) {
-
 				LogUtils.i(TAG, "typeTmp:" + typeTmp);
 				if (TextUtils.isEmpty(typeTmp)) {
 					continue;
 				}
-				if (typeTmp.contains("*/") || typeTmp.contains("image/")) {
+				if (typeTmp.contains("*/") || typeTmp.contains("image/")) {  //这是拍照模式
 					needCamera = true;
 					break;
 				}
+
+				if (typeTmp.contains("video/")) {  //调用摄像机拍摄  这是录像模式
+					needCamera = true;
+					mVideoState = true;
+				}
 			}
-			if (!needCamera) {
+			if (!needCamera && !needVideo) {
 				touchOffFileChooserAction();
 				return;
 			}
@@ -282,7 +297,6 @@ public class FileChooser {
 					case 0:
 						mCameraState = true;
 						onCameraAction();
-
 						break;
 					case 1:
 						mCameraState = false;
@@ -341,7 +355,11 @@ public class FileChooser {
 
 	private void openCameraAction() {
 		Action mAction = new Action();
-		mAction.setAction(Action.ACTION_CAMERA);
+		if (mVideoState) {  //调用摄像
+			mAction.setAction(Action.ACTION_VIDEO);
+		} else {
+			mAction.setAction(Action.ACTION_CAMERA);
+		}
 		ActionActivity.setChooserListener(this.getChooserListener());
 		ActionActivity.start(mActivity, mAction);
 	}
@@ -531,7 +549,7 @@ public class FileChooser {
 
 		if (sum > AgentWebConfig.MAX_FILE_LENGTH) {
 			if (mAgentWebUIController.get() != null) {
-				mAgentWebUIController.get().onShowMessage(mActivity.getString(R.string.agentweb_max_file_length_limit, (AgentWebConfig.MAX_FILE_LENGTH / 1024 / 1024) + ""), TAG.concat("|convertFileAndCallback"));
+				mAgentWebUIController.get().onShowMessage(mActivity.getString(R.string.agentweb_max_file_length_limit, (AgentWebConfig.MAX_FILE_LENGTH / 1024 / 1024) + ""), "convertFileAndCallback");
 			}
 			mJsChannelCallback.call(null);
 			return;
